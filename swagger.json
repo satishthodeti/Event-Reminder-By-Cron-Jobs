@@ -1,0 +1,252 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Event Reminder System API",
+        "version": "1.0.0",
+        "description": "API documentation for Event Reminder System using Node.js, Express, MongoDB and Cron Jobs"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5000/api/events",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/add": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Create a new event",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EventInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Event created successfully"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/edit": {
+            "put": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Update an existing event",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EventEditInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Event updated successfully"
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/delete": {
+            "delete": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Delete an event",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "64ff98e930c8c0ab197a2874"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Event deleted successfully"
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/all": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get all events or filter by date, range, or keyword",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "description": "Filter events on a specific date"
+                    },
+                    {
+                        "name": "fromDate",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "description": "Start date for filtering events"
+                    },
+                    {
+                        "name": "toDate",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "description": "End date for filtering events"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Keyword to search in title or description"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of matching or all events"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/get/by/{id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get event by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "64ff98e930c8c0ab197a2874"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Event found"
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "EventInput": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "description",
+                    "eventTime",
+                    "email"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Doctor Appointment"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Routine checkup"
+                    },
+                    "eventTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-03T12:05:00.000Z"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    }
+                }
+            },
+            "EventEditInput": {
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "64ff98e930c8c0ab197a2874"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Updated Event Title"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Updated event description"
+                    },
+                    "eventTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-03T14:00:00.000Z"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "updated@example.com"
+                    }
+                }
+            }
+        }
+    }
+}
