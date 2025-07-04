@@ -8,8 +8,9 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 
-const connectDB = require('./config/db');
+const connectDB = require('./config/mongodb');
 const eventRoutes = require('./routes/eventRoutes');
+const userRoutes = require('./routes/userRoutes'); 
 const swaggerDocument = require('./swagger.json');
 const PORT = process.env.PORT || 5000;
 
@@ -54,12 +55,13 @@ app.get('/ok', (req, res) => {
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
 
 // Global fallback for unknown routes
-// app.use('/ok', (req, res) => {
-//     res.status(200).json({ message: 'Event Reminder By Cron Jobs Porject Set-Up Ready.' });
-// });
+app.use('/ok', (req, res) => {
+    res.status(200).json({ message: 'Event Reminder By Cron Jobs Porject Set-Up Ready.' });
+});
 
 // ------------------ ✅ Server ------------------ //
 
